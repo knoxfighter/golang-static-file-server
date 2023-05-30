@@ -1,5 +1,7 @@
 FROM scratch
 
-COPY static-server /bin/
+COPY static_server /bin/
+COPY login.gtpl /bin/
+COPY upload.gtpl /bin/
 
-ENTRYPOINT ["/bin/static-server"]
+ENTRYPOINT ["/bin/static_server"]

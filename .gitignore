@@ -16,5 +16,5 @@ vendor
 tmp
 golang-http-file-upload-download
 
-docker/static-server
+docker/static[-_]server
 .env

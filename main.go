@@ -35,7 +35,7 @@ func init() {
 }
 
 const maxUploadSize = 2 * 1024 * 1024 * 1024 // 2 Gb
-var uploadPath = os.TempDir()
+var uploadPath = "/files/"
 
 func main() {
 	users[os.Getenv("username")] = os.Getenv("password")
@@ -46,8 +46,8 @@ func main() {
 	fs := http.FileServer(http.Dir(uploadPath))
 	http.Handle("/files/", http.StripPrefix("/files", fs))
 
-	log.Print("Server started on localhost:8080, use /upload for uploading files and /files/{fileName} for downloading")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Print("Server started")
+	log.Fatal(http.ListenAndServe(":80", nil))
 }
 
 func checkSession(w http.ResponseWriter, r *http.Request) (success bool) {
