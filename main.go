@@ -39,6 +39,7 @@ var uploadPath = "/files/"
 
 func main() {
 	users[os.Getenv("username")] = os.Getenv("password")
+	log.Printf("added user [%s] to ", os.Getenv("username"))
 
 	http.HandleFunc("/upload", uploadFileHandler)
 	http.HandleFunc("/login", loginHandler)
@@ -83,8 +84,17 @@ func checkSession(w http.ResponseWriter, r *http.Request) (success bool) {
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		t, _ := template.ParseFiles("login.gtpl")
-		t.Execute(w, nil)
+		t, err := template.ParseFiles("login.gtpl")
+		if err != nil {
+			panic(err)
+		}
+		if t == nil {
+			panic("Error parsing login template")
+		}
+		err = t.Execute(w, nil)
+		if err != nil {
+			panic(err)
+		}
 		return
 	}
 
@@ -127,8 +137,17 @@ func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
-		t, _ := template.ParseFiles("upload.gtpl")
-		t.Execute(w, nil)
+		t, err := template.ParseFiles("upload.gtpl")
+		if err != nil {
+			panic(err)
+		}
+		if t == nil {
+			panic("unable to parse upload template")
+		}
+		err = t.Execute(w, nil)
+		if err != nil {
+			panic(err)
+		}
 		return
 	}
 	if err := r.ParseMultipartForm(maxUploadSize); err != nil {

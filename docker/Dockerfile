@@ -1,7 +1,7 @@
 FROM scratch
 
 COPY static_server /bin/
-COPY login.gtpl /bin/
-COPY upload.gtpl /bin/
+COPY login.gtpl /
+COPY upload.gtpl /
 
 ENTRYPOINT ["/bin/static_server"]
