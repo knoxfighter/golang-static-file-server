@@ -35,7 +35,7 @@ func init() {
 }
 
 const maxUploadSize = 2 * 1024 * 1024 * 1024 // 2 Gb
-var uploadPath = "/files/"
+var uploadPath = "files/"
 
 func main() {
 	users[os.Getenv("username")] = os.Getenv("password")
@@ -209,22 +209,26 @@ func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
 	sha256Hash := sha256.Sum256(fileBytes)
 	sha512Hash := sha512.Sum512(fileBytes)
 
-	err = os.WriteFile(fileHeader.Filename+".md5", md5Hash[:], 0644)
+	md5filePath := filepath.Join(uploadPath, fileHeader.Filename+".md5")
+	err = os.WriteFile(md5filePath, md5Hash[:], 0644)
 	if err != nil {
 		renderError(w, "CANT_WRITE_MD5", http.StatusInternalServerError)
 		return
 	}
-	err = os.WriteFile(fileHeader.Filename+".sha1", sha1Hash[:], 0644)
+	sha1filePath := filepath.Join(uploadPath, fileHeader.Filename+".sha1")
+	err = os.WriteFile(sha1filePath, sha1Hash[:], 0644)
 	if err != nil {
 		renderError(w, "CANT_WRITE_SHA1", http.StatusInternalServerError)
 		return
 	}
-	err = os.WriteFile(fileHeader.Filename+".sha256", sha256Hash[:], 0644)
+	sha256filePath := filepath.Join(uploadPath, fileHeader.Filename+".sha256")
+	err = os.WriteFile(sha256filePath, sha256Hash[:], 0644)
 	if err != nil {
 		renderError(w, "CANT_WRITE_SHA256", http.StatusInternalServerError)
 		return
 	}
-	err = os.WriteFile(fileHeader.Filename+".sha512", sha512Hash[:], 0644)
+	sha512filePath := filepath.Join(uploadPath, fileHeader.Filename+".sha512")
+	err = os.WriteFile(sha512filePath, sha512Hash[:], 0644)
 	if err != nil {
 		renderError(w, "CANT_WRITE_SHA512", http.StatusInternalServerError)
 		return
