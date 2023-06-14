@@ -130,6 +130,8 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		Value:   token,
 		Expires: expires,
 	})
+
+	http.Redirect(w, r, "/upload", http.StatusFound)
 }
 
 func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
