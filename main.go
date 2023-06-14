@@ -5,6 +5,7 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"crypto/sha512"
+	"encoding/hex"
 	"fmt"
 	"github.com/google/uuid"
 	"html/template"
@@ -209,32 +210,42 @@ func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
 	sha256Hash := sha256.Sum256(fileBytes)
 	sha512Hash := sha512.Sum512(fileBytes)
 
+	md5HashStr := make([]byte, 32)
+	sha1HashStr := make([]byte, 40)
+	sha256HashStr := make([]byte, 64)
+	sha512HashStr := make([]byte, 128)
+
+	hex.Encode(md5HashStr, md5Hash[:])
+	hex.Encode(sha1HashStr, sha1Hash[:])
+	hex.Encode(sha256HashStr, sha256Hash[:])
+	hex.Encode(sha512HashStr, sha512Hash[:])
+
 	md5filePath := filepath.Join(uploadPath, fileHeader.Filename+".md5")
-	err = os.WriteFile(md5filePath, md5Hash[:], 0644)
+	err = os.WriteFile(md5filePath, md5HashStr, 0644)
 	if err != nil {
 		renderError(w, "CANT_WRITE_MD5", http.StatusInternalServerError)
 		return
 	}
 	sha1filePath := filepath.Join(uploadPath, fileHeader.Filename+".sha1")
-	err = os.WriteFile(sha1filePath, sha1Hash[:], 0644)
+	err = os.WriteFile(sha1filePath, sha1HashStr, 0644)
 	if err != nil {
 		renderError(w, "CANT_WRITE_SHA1", http.StatusInternalServerError)
 		return
 	}
 	sha256filePath := filepath.Join(uploadPath, fileHeader.Filename+".sha256")
-	err = os.WriteFile(sha256filePath, sha256Hash[:], 0644)
+	err = os.WriteFile(sha256filePath, sha256HashStr, 0644)
 	if err != nil {
 		renderError(w, "CANT_WRITE_SHA256", http.StatusInternalServerError)
 		return
 	}
 	sha512filePath := filepath.Join(uploadPath, fileHeader.Filename+".sha512")
-	err = os.WriteFile(sha512filePath, sha512Hash[:], 0644)
+	err = os.WriteFile(sha512filePath, sha512HashStr, 0644)
 	if err != nil {
 		renderError(w, "CANT_WRITE_SHA512", http.StatusInternalServerError)
 		return
 	}
 
-	w.Write([]byte(fmt.Sprintf("SUCCESS - use /files/%v to access the file", fileHeader.Filename)))
+	w.Write([]byte(fmt.Sprintf("SUCCESS - use <a href=\"https://static.knox.moe/files/%v\">/files/%v</a> to access the file", fileHeader.Filename, fileHeader.Filename)))
 }
 
 func renderError(w http.ResponseWriter, message string, statusCode int) {
